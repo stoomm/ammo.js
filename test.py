@@ -18,7 +18,7 @@ print
 
 def run(filename):
   if JS_ENGINE == SPIDERMONKEY_ENGINE:
-    return Popen(JS_ENGINE + ['-e', 'gcparam("maxBytes", 1024*1024*1024); load("' + build + '"); load("' + os.path.join('tests', 'testutils.js') + '")', filename], stdout=PIPE).communicate()[0]
+    return Popen(JS_ENGINE + ['-e', 'gcparam("maxBytes", 1024*1024*1024); var Module = { TOTAL_MEMORY: 20*1024*1024 }; load("' + build + '"); load("' + os.path.join('tests', 'testutils.js') + '")', filename], stdout=PIPE).communicate()[0]
   else:
     return Popen(JS_ENGINE + [build, os.path.join('tests', 'testutils.js'), filename], stdout=PIPE).communicate()[0]
 
@@ -31,7 +31,7 @@ def stage(text):
 if len(sys.argv) != 3 or sys.argv[2] != 'benchmark':
   stage('regression tests')
 
-  for test in ['basics', 'wrapping', '2', '3']:
+  for test in ['basics', 'wrapping', '2', '3', 'constraint']:
     name = test + '.js'
     print '     ', name
     fullname = os.path.join('tests', name)
